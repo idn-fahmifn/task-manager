@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('project', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->string('project_name');
+            $table->text('project_desc');
+            $table->enum('priority', ['low', 'medium', 'high']);
+            $table->date('due_task');
+            $table->enum('status', ['pending', 'in progress', 'hold', 'done', 'reject', 'canceled'])->default('pending');
+            $table->string('slug')->unique();
+            $table->string('link')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('project');
+    }
+};
