@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('project_name');
+            $table->string('slug')->unique();
             $table->text('project_desc');
             $table->enum('priority', ['low', 'medium', 'high']);
             $table->date('due_task');
             $table->enum('status', ['pending', 'in progress', 'hold', 'done', 'reject', 'canceled'])->default('pending');
-            $table->string('slug')->unique();
             $table->string('link')->nullable();
             $table->timestamps();
         });

@@ -11,7 +11,27 @@ class DashboardController extends Controller
 {
     public function admin()
     {
-        return Inertia::render('Admin/Dashboard');
+        $total = Project::count();
+        $inProgress = Project::where('status', 'in progress')->count();
+        $hold = Project::where('status', 'hold')->count();
+        $done = Project::where('status', 'done')->count();
+
+        $project = Project::orderByRaw("
+        CASE
+            WHEN priority = 'High' THEN 1
+            WHEN priority = 'Medium' THEN 2
+            WHEN priority = 'Low' THEN 3
+            ELSE 4
+        END")->paginate(5);
+
+
+        return Inertia::render('Admin/Dashboard', [
+            'total' => $total,
+            'in_progress' => $inProgress,
+            'hold' => $hold,
+            'done' => $done,
+            'projects' => $project
+        ]);
     }
 
     public function team()
@@ -29,7 +49,7 @@ class DashboardController extends Controller
         $done = Project::where('user_id', $saya)->where('status', 'done')->count();
 
         $project = Project::where('user_id', $saya)->get();
-        
+
         return Inertia::render('User/Dashboard', [
             'projects' => $project,
             'project_saya' => $projectSaya,

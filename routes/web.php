@@ -2,6 +2,8 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TeamController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -19,6 +21,11 @@ Route::get('/', function () {
 // Route Admin
 Route::prefix('administrator')->middleware(['auth', 'verified','admin'])->group(function(){
     Route::get('dashboard', [DashboardController::class, 'admin'])->name('dashboard');
+
+    // task controller
+    Route::post('task/send/{param}', [TaskController::class, 'store'])->name('task.store');
+    Route::get('project/{param}', [TaskController::class, 'showProject'])->name('task.show');
+    Route::get('team', [TeamController::class, 'index'])->name('team.index');
 });
 
 // Route Team
@@ -32,8 +39,8 @@ Route::prefix('user')->middleware(['auth', 'verified', 'user'])->group(function(
     Route::get('dashboard', [DashboardController::class, 'user'])->name('dashboard.user');
     
     // submit Proeject
-    Route::post('submit-project', [ProjectController::class, 'submitProject'])->name('project.store');
-    Route::get('detail/{slug}', [ProjectController::class, 'show'])->name('user.detail-project');
+    Route::post('submit-project/', [ProjectController::class, 'submitProject'])->name('project.store');
+    Route::get('detail/{param}', [ProjectController::class, 'show'])->name('user.detail-project');
 
 
 });

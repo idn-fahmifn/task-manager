@@ -14,8 +14,6 @@ defineProps({
 })
 
 
-
-
 const form = useForm({
     project_name: '',
     priority: '',
@@ -45,6 +43,8 @@ const submit = () => {
 };
 
 
+
+
 </script>
 <template>
     <AuthenticatedLayout>
@@ -67,7 +67,7 @@ const submit = () => {
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                         <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-gray-600">Semua Project</h3>
+                            <h3 class="text-gray-600">Project saya</h3>
                             <p class="text-3xl font-bold mt-2">{{ total }}</p>
                         </div>
 
@@ -112,7 +112,7 @@ const submit = () => {
                         </div>
 
 
-                        <div class="h-auto md:min-h-[75%]">
+                        <div class="md:min-h-[75%]">
                             <div v-for="project in projects.data" :key="project.id" class="space-y-4">
                                 <a :href="route('task.show', project.slug)"
                                     class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-2 items-center bg-gray-50 hover:bg-gray-100 p-4 rounded-lg">
@@ -163,7 +163,7 @@ const submit = () => {
                                             <span>selesai</span>
                                         </div>
                                         <div v-if="project.status === 'canceled'"
-                                            class="mt-1 flex items-center space-x-2 px-3 py-1.5 rounded-md text-sm font-medium">
+                                            class="mt-1 flex items-center space-x-2 px-3 py-1.5 uppercase rounded-md text-sm font-medium">
                                             <span class="w-2 h-2 bg-red-600 rounded-full"></span>
                                             <span>project dibatalkan</span>
                                         </div>

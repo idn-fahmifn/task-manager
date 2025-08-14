@@ -1,19 +1,49 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
-defineProps({
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import Modal from '@/Components/Modal.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextArea from '@/Components/TextArea.vue';
+
+const props = defineProps({
     project: Object,
     created: String,
+    task: Object,
     user: Object,
-    task:Object
 })
+
+const form = useForm({
+    task_name: '',
+    description: '',
+})
+
+
+const modalNewTask = ref(false);
+const openCreateModal = () => {
+    modalNewTask.value = true;
+};
+
+const submit = () => {
+    form.post(route('task.store', props.project.id), {
+        onSuccess: () => closeModal(), // Tutup modal jika sukses
+    });
+};
+
+const closeModal = () => {
+    modalNewTask.value = false;
+    form.reset(); // Reset form saat modal ditutup
+};
+
 
 </script>
 
 <template>
 
-    <Head title="Detail Project" />
+    <Head title="Dashboard" />
 
     <AuthenticatedLayout>
         <x-app-layout>
@@ -22,7 +52,7 @@ defineProps({
                     <header
                         class="flex flex-col sm:flex-row justify-between items-center pb-4 border-b border-gray-200">
                         <div class="flex items-center space-x-2">
-                            <a :href="route('dashboard.user')"
+                            <a :href="route('dashboard')"
                                 class="flex items-center space-x-2 px-3 py-1.5 border border-gray-300 rounded-md hover:bg-gray-100"><svg
                                     xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
@@ -32,14 +62,20 @@ defineProps({
                                 <span class="text-sm font-medium text-gray-700">Back</span>
                             </a>
                         </div>
+                        <div class="flex items-center space-x-2 mt-4 sm:mt-0">
+                            <button class="text-sm font-medium text-gray-700 px-4 py-1.5 rounded-md hover:bg-gray-100">
+                                Tambahkan Team</button>
+                            <PrimaryButton @click="openCreateModal">Buat Tugas</PrimaryButton>
+
+                        </div>
                     </header>
+
 
                     <main class="mt-6">
                         <div>
                             <h1 class="text-2xl font-bold text-gray-900 uppercase">{{ project.project_name }}</h1>
                             <p class="text-gray-500 lowercase text-sm">Dibuat {{ created }}</p>
                         </div>
-
                         <div
                             class="mt-6 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                             <div class="flex flex-wrap gap-4">
@@ -93,19 +129,34 @@ defineProps({
                                         <span>High</span>
                                     </div>
                                 </div>
-                                <!-- <div>
-                                    <label class="text-xs text-gray-500">Followers</label>
+                                <div>
+                                    <label class="text-xs text-gray-500">Team Assign</label>
                                     <div class="mt-1 flex items-center pl-1.5">
                                         <img src="https://i.pravatar.cc/150?u=a" alt="avatar"
                                             class="w-7 h-7 rounded-full border-2 border-white">
                                         <img src="https://i.pravatar.cc/150?u=b" alt="avatar"
                                             class="w-7 h-7 rounded-full border-2 border-white -ml-2">
                                     </div>
-                                </div> -->
+                                </div>
+                            </div>
+                            <div class="rounded-xl border flex justify-around items-center py-2 px-6 space-x-4">
+                                <div class="relative w-12 h-12 rounded-full overflow-hidden">
+                                    <img src="https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg"
+                                        alt="User Avatar" class="object-cover w-full h-full">
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">{{ project.user.name }}</h3>
+                                    <span
+                                        class="inline-block bg-gray-200 rounded-full px-2 py-1 text-xs font-semibold text-gray-700">Pemilik
+                                        Project</span>
+                                    <a href=""
+                                        class="inline-block bg-green-200 rounded-full px-2 ml-2 py-1 text-xs font-semibold text-gray-700">
+                                        Whatsapp
+                                    </a>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="mt-8">
+                        <!-- <div class="mt-8">
                             <h3 class="text-sm font-semibold text-gray-500 mb-2">Pratinjau Progress</h3>
                             <div class="flex space-x-1">
                                 <div class="flex-1 text-center text-sm font-semibold bg-green-100 text-green-800 py-2"
@@ -121,22 +172,22 @@ defineProps({
                                     style="clip-path: polygon(0 0, 100% 0, 100% 100%, 5% 100%, 0% 50%);">Onboarding (CS)
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- <div class="mt-8 border-b border-gray-200">
                             <nav class="-mb-px flex space-x-6">
-                                <a href="#" class="py-2 px-1 text-gray-500 hover:text-indigo-600">Tasks</a>
+                                <a href="#" class="py-2 px-1 text-gray-500 hover:text-blue-600">Tasks</a>
                                 <a href="#"
-                                    class="py-2 px-1 text-indigo-600 font-semibold border-b-2 border-indigo-600">Custom
+                                    class="py-2 px-1 text-blue-600 font-semibold border-b-2 border-blue-600">Custom
                                     fields</a>
-                                <a href="#" class="py-2 px-1 text-gray-500 hover:text-indigo-600">Notes</a>
-                                <a href="#" class="py-2 px-1 text-gray-500 hover:text-indigo-600">Updates</a>
+                                <a href="#" class="py-2 px-1 text-gray-500 hover:text-blue-600">Notes</a>
+                                <a href="#" class="py-2 px-1 text-gray-500 hover:text-blue-600">Updates</a>
                             </nav>
                         </div> -->
 
                         <div class="mt-6">
                             <!-- <div class="flex flex-wrap gap-2 text-sm font-medium text-gray-600">
-                                <button class="px-3 py-1 rounded-md bg-gray-100 text-indigo-700 font-semibold">All
+                                <button class="px-3 py-1 rounded-md bg-gray-100 text-blue-700 font-semibold">All
                                     Customers</button>
                                 <button class="px-3 py-1 rounded-md hover:bg-gray-100">All Accounts</button>
                                 <button class="px-3 py-1 rounded-md hover:bg-gray-100">Angela's Accounts</button>
@@ -145,7 +196,6 @@ defineProps({
                                 <button class="px-3 py-1 rounded-md hover:bg-gray-100">CSM Accounts</button>
                                 <button class="px-3 py-1 rounded-md hover:bg-gray-100">Forecast</button>
                             </div> -->
-
                             <div class="mt-6 border-t border-gray-200 pt-6">
                                 <h4 class="text-lg font-semibold text-gray-800">Deskripsi Pekerjaan</h4>
                                 <p class="text-gray-600 text-sm">
@@ -178,8 +228,7 @@ defineProps({
                                             <a href=""
                                                 class="grid grid-cols-1 md:grid-cols-6 gap-4 mb-2 items-center bg-gray-50 hover:bg-gray-100 p-4 rounded-lg">
                                                 <div class="col-span-1 md:col-span-3 flex items-center">
-                                                    <span class="font-semibold text-gray-900">{{ task.task_name
-                                                        }}</span>
+                                                    <span class="font-semibold text-gray-900">{{ task.task_name }}</span>
                                                 </div>
                                                 <div class="col-span-1 md:col-span-3 flex items-center">
                                                     <span class="text-sm text-gray-900">
@@ -199,6 +248,33 @@ defineProps({
                     </main>
                 </div>
             </div>
+            <!-- modal tugas -->
+            <Modal :show="modalNewTask" @close="closeModal">
+
+                <form @submit.prevent="submit" class="p-6">
+                    <!-- <div class="mt-6 flex justify-end"> -->
+                    <div class="mt-3">
+                        <h4 class="text-gray-700 uppercase font-semibold">Buat Tugas Baru</h4>
+                    </div>
+                    <div class="mt-4">
+                        <InputLabel for="task_name" value="Nama Tugas" />
+                        <TextInput id="task_name" type="text" class="mt-1 block w-full" placeholder="Masukan Nama Tugas"
+                            v-model="form.task_name" required autofocus />
+                        <InputError class="mt-2" :message="form.errors.task_name" />
+                    </div>
+
+                    <div class="mt-4">
+                        <InputLabel for="description" value="Deskripsi Tugas" />
+                        <TextArea id="description" label="Deskripsi Project" v-model="form.description" />
+                        <InputError :message="form.errors.description" class="mt-2" />
+                    </div>
+                    <div class="mt-4">
+                        <PrimaryButton type="submit" :disabled="form.processing">Simpan</PrimaryButton>
+                    </div>
+                    <!-- </div> -->
+                </form>
+            </Modal>
+
         </x-app-layout>
     </AuthenticatedLayout>
 </template>
